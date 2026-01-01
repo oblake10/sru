@@ -1,0 +1,215 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+.app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #0b0e14;
+    color: #e8e8e8;
+}
+
+.topbar {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand .title {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.brand .subtitle {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-top: 2px;
+}
+
+.tools {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    padding: 9px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.btn.secondary {
+    opacity: 0.95;
+}
+
+.content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 0;
+}
+
+.panel {
+    padding: 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: auto;
+}
+
+.panel-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.sep {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 14px 0;
+}
+
+.race-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.race-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    cursor: pointer;
+}
+
+.race-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.race-item.active {
+    outline: 2px solid rgba(255, 255, 255, 0.22);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    display: inline-block;
+}
+
+.race-name {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.help {
+    padding-left: 16px;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.help li {
+    margin: 6px 0;
+    font-size: 12px;
+}
+
+.coords-box {
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.coords-box.hidden {
+    display: none;
+}
+
+.coords-title {
+    font-weight: 700;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.coords-text {
+    margin-top: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.coords-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.map-wrap {
+    position: relative;
+    min-height: 0;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    background: #0b0e14;
+}
+
+.leaflet-container.crosshair {
+    cursor: crosshair;
+}
+
+.floating-buttons {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* para no bloquear el mapa */
+}
+
+.float-btn {
+    position: absolute;
+    pointer-events: auto;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    backdrop-filter: blur(4px);
+}
+
+.float-btn:hover {
+    background: rgba(0, 0, 0, 0.70);
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+}
