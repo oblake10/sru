@@ -2,341 +2,407 @@
 <html lang="es">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mapa GTA - Carreras</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mapa GTA - Carreras</title>
 
-    <!-- Leaflet (CDN) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <link rel="icon" type="image/png" href="/images/logo.png">
-    <link rel="stylesheet" href="./style.css" />
+  <!-- Leaflet (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="icon" type="image/png" href="./images/logo.png">
+  <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
-    <div class="app">
-        <header class="topbar">
-            <div class="brand">
-                <img src="/images/logo.png" alt="Logo" class="logo">
-                <div class="title">Mapa de Carreras - San Andreas Highway Patrol</div>
-            </div>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="./images/logo.png" alt="Logo" class="logo">
+        <div class="title">Mapa de Carreras - San Andreas Highway Patrol</div>
+      </div>
 
+      <div class="tools">
+        <button id="btnCreateRoute" class="btn secondary" type="button" aria-pressed="false">Crear ruta:
+          OFF</button>
+        <button id="btnUndoPoint" class="btn secondary" type="button">Borrar último punto</button>
+        <button id="btnPrintRoute" class="btn secondary" type="button">Imprimir ruta</button>
 
+        <button id="btnCoords" class="btn secondary" type="button" aria-pressed="false">Modo coordenadas:
+          OFF</button>
+      </div>
+    </header>
 
+    <div class="content">
+      <aside class="panel">
+        <div class="panel-title">Carreras</div>
+        <button id="btnToggleAllRaces" class="btn secondary btn-block" type="button">
+          Ver carreras
+        </button>
+        <div id="raceList" class="race-list"></div>
 
-            <div class="tools">
-                <button id="btnClear" class="btn secondary" type="button">Borrar ruta</button>
-                <button id="btnCreateRoute" class="btn secondary" type="button" aria-pressed="false">Crear ruta:
-                    OFF</button>
-                <button id="btnUndoPoint" class="btn secondary" type="button">Borrar último punto</button>
-                <button id="btnPrintRoute" class="btn secondary" type="button">Imprimir ruta</button>
+        <hr class="sep" />
 
-                <button id="btnCoords" class="btn secondary" type="button" aria-pressed="false">Modo coordenadas:
-                    OFF</button>
-            </div>
-        </header>
-
-        <div class="content">
-            <aside class="panel">
-                <div class="panel-title">Carreras</div>
-                <div id="raceList" class="race-list"></div>
-
-                <hr class="sep" />
-
-                <div class="panel-title">Ayuda rápida</div>
-                <ul class="help">
-                    <li><b>Clic en carrera</b>: Dibuja la ruta seleccionada y marca su inicio</li>
-
-                    <li><b>Borrar ruta</b>: Elimina la ruta actual, el punto de inicio y limpia el mapa</li>
-
-                    <li><b>Crear ruta</b>: Activa el modo edición. Cada clic en el mapa añade un punto al recorrido</li>
-
-                    <li><b>Borrar último punto</b>: Elimina el último punto añadido en la ruta en edición</li>
-
-                    <li><b>Imprimir ruta</b>: Copia al portapapeles los puntos de la ruta creada, listos para pegar en
-                        <code>path</code>
-                    </li>
-
-                    <li><b>Modo coordenadas</b>: Clic en el mapa y muestra las coordenadas <code>[y, x]</code> en
-                        pantalla y consola</li>
-
-                    <li><b>Zoom + / −</b>: Acerca o aleja el mapa sin afectar a las rutas dibujadas</li>
-                </ul>
-
-                <div id="coordsBox" class="coords-box hidden">
-                    <div class="coords-title">Coordenadas (último clic)</div>
-                    <div id="coordsText" class="coords-text">—</div>
-                    <div class="coords-hint">Copia esto para crear puntos de ruta en <code>routes.js</code></div>
-                </div>
-            </aside>
-
-            <main class="map-wrap">
-                <div id="map"></div>
-
-                <!-- Botones "flotantes" sobre el mapa (opcionales) -->
-                <div id="floatingButtons" class="floating-buttons"></div>
-            </main>
+        <div id="coordsBox" class="coords-box hidden">
+          <div class="coords-title">Coordenadas (último clic)</div>
+          <div id="coordsText" class="coords-text">—</div>
+          <div class="coords-hint">Copia esto para crear puntos de ruta en <code>routes.js</code></div>
         </div>
+      </aside>
+
+      <main class="map-wrap">
+        <div id="map"></div>
+
+        <!-- Botones "flotantes" sobre el mapa (opcionales) -->
+        <div id="floatingButtons" class="floating-buttons"></div>
+      </main>
     </div>
+  </div>
 
-    <script src="./route.js"></script>
-    <script>
-        /**
-         * CONFIG DEL MAPA (tu imagen: 1660x2048)
-         * Leaflet CRS.Simple usa coordenadas en píxeles: [y, x]
-         */
-        const IMAGE_URL = "./images/mapa.png";
-        const IMAGE_W = 1660;   // ancho
-        const IMAGE_H = 2048;   // alto
+  <script src="./route.js"></script>
+  <script>
+    /**
+     * CONFIG DEL MAPA (tu imagen: 1660x2048)
+     * Leaflet CRS.Simple usa coordenadas en píxeles: [y, x]
+     */
+    const IMAGE_URL = "./images/mapa.png";
+    const IMAGE_W = 1660;   // ancho
+    const IMAGE_H = 2048;   // alto
 
-        const bounds = [[0, 0], [IMAGE_H, IMAGE_W]]; // [[yMin,xMin],[yMax,xMax]]
+    const bounds = [[0, 0], [IMAGE_H, IMAGE_W]]; // [[yMin,xMin],[yMax,xMax]]
 
-        // Crear mapa sobre imagen
-        const map = L.map("map", {
-            crs: L.CRS.Simple,
-            minZoom: -2,
-            maxZoom: 2,
-            zoomSnap: 0.25,
-            zoomDelta: 0.25,
-            wheelPxPerZoomLevel: 120,
-            attributionControl: false,
+    // Crear mapa sobre imagen
+    const map = L.map("map", {
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 2,
+      zoomSnap: 0.25,
+      zoomDelta: 0.25,
+      wheelPxPerZoomLevel: 120,
+      attributionControl: false,
+    });
+
+    L.imageOverlay(IMAGE_URL, bounds).addTo(map);
+    const initialZoom = -1; // ajusta si quieres más cerca (-0.5) o más lejos (-1.5)
+    const initialCenter = [IMAGE_H / 2, IMAGE_W / 2];
+
+    map.setView(initialCenter, initialZoom);
+
+
+    // Limitar paneo fuera de la imagen
+    map.setMaxBounds(bounds);
+    map.on("drag", () => map.panInsideBounds(bounds, { animate: false }));
+    // ====== Capas por carrera (para mostrar/ocultar varias) ======
+    const raceLayersById = new Map(); // id -> { line, start }
+    const visibleRaceIds = new Set();
+
+    function getStartPointFromRace(race) {
+      // Si alguna vez quieres permitir race.start, lo priorizas aquí.
+      if (Array.isArray(race.start) && race.start.length === 2) return race.start;
+      return (Array.isArray(race.path) && race.path.length) ? race.path[0] : null;
+    }
+
+    function addRaceToMap(race) {
+      // Línea
+      const line = L.polyline(race.path, {
+        weight: 3,
+        opacity: 0.95,
+        color: race.color,
+        lineJoin: "round",
+        lineCap: "round",
+      }).addTo(map);
+
+      // Inicio (círculo en el primer punto)
+      const startPoint = getStartPointFromRace(race);
+      let start = null;
+
+      if (startPoint) {
+        start = L.circleMarker(startPoint, {
+          radius: 5,
+          color: race.color,
+          weight: 3,
+          fillColor: race.color,
+          fillOpacity: 1,
+        }).addTo(map);
+      }
+
+      raceLayersById.set(race.id, { line, start });
+      visibleRaceIds.add(race.id);
+    }
+
+    function removeRaceFromMap(raceId) {
+      const layers = raceLayersById.get(raceId);
+      if (!layers) return;
+
+      if (layers.line) map.removeLayer(layers.line);
+      if (layers.start) map.removeLayer(layers.start);
+
+      raceLayersById.delete(raceId);
+      visibleRaceIds.delete(raceId);
+    }
+
+    // Toggle (ojo)
+    function toggleRaceVisibility(raceId) {
+      const race = RACES.find(r => r.id === raceId);
+      if (!race) return;
+
+      const isVisible = visibleRaceIds.has(raceId);
+
+      if (isVisible) removeRaceFromMap(raceId);
+      else addRaceToMap(race);
+
+      updateEyeUI(raceId, !isVisible);
+    }
+
+    // UI
+    const raceListEl = document.getElementById("raceList");
+    const btnCoords = document.getElementById("btnCoords");
+    const coordsBox = document.getElementById("coordsBox");
+    const coordsText = document.getElementById("coordsText");
+    const floatingButtons = document.getElementById("floatingButtons");
+
+    // ====== CREAR RUTA (clic para añadir puntos + preview) ======
+    const btnCreateRoute = document.getElementById("btnCreateRoute");
+    const btnUndoPoint = document.getElementById("btnUndoPoint");
+    const btnPrintRoute = document.getElementById("btnPrintRoute");
+
+    let createRouteMode = false;
+    let createdPoints = [];
+    let createdPolyline = null;
+
+    function setCreateRouteMode(on) {
+      createRouteMode = on;
+      btnCreateRoute.setAttribute("aria-pressed", String(on));
+      btnCreateRoute.textContent = `Crear ruta: ${on ? "ON" : "OFF"}`;
+
+      // cursor tipo mira cuando está activo
+      map.getContainer().classList.toggle("crosshair", on);
+
+      // Si activas crear ruta, apaga coordsMode (si lo estás usando)
+      if (on && coordsMode) setCoordsMode(false);
+    }
+
+    btnCreateRoute.addEventListener("click", () => {
+      setCreateRouteMode(!createRouteMode);
+    });
+
+    btnUndoPoint.addEventListener("click", () => {
+      if (!createdPoints.length) return;
+      createdPoints.pop();
+      redrawCreatedRoute();
+    });
+
+    btnPrintRoute.addEventListener("click", async () => {
+      if (!createdPoints.length) return;
+
+      const pretty = `[${createdPoints.map(p => `[${p[0]}, ${p[1]}]`).join(", ")}]`;
+
+      try {
+        await navigator.clipboard.writeText(pretty);
+
+        // Feedback visual
+        const originalText = btnPrintRoute.textContent;
+        btnPrintRoute.textContent = "Copiado ✅";
+        setTimeout(() => {
+          btnPrintRoute.textContent = originalText;
+        }, 900);
+
+      } catch (err) {
+        // Fallback por si el navegador bloquea clipboard
+        console.warn("No se pudo copiar automáticamente, copia manual:", pretty);
+        alert("No se pudo copiar automáticamente. Mira la consola.");
+      }
+    });
+
+
+    function redrawCreatedRoute() {
+      // borrar preview anterior
+      if (createdPolyline) {
+        map.removeLayer(createdPolyline);
+        createdPolyline = null;
+      }
+
+      // dibujar preview si hay >=2 puntos
+      if (createdPoints.length >= 2) {
+        createdPolyline = L.polyline(createdPoints, {
+          weight: 3,
+          opacity: 0.9,
+          color: "#ff0000",
+          lineJoin: "round",
+          lineCap: "round",
+        }).addTo(map);
+      }
+    }
+
+    // Añadir puntos al clicar en el mapa SOLO si modo crear ruta está ON
+    map.on("click", (e) => {
+      if (!createRouteMode) return;
+
+      const point = [round(e.latlng.lat), round(e.latlng.lng)]; // [y, x]
+      createdPoints.push(point);
+      redrawCreatedRoute();
+    });
+
+    // Modo coordenadas (para sacar puntos clicando)
+    let coordsMode = false;
+
+    function setCoordsMode(on) {
+      coordsMode = on;
+      btnCoords.setAttribute("aria-pressed", String(on));
+      btnCoords.textContent = `Modo coordenadas: ${on ? "ON" : "OFF"}`;
+      coordsBox.classList.toggle("hidden", !on);
+      map.getContainer().classList.toggle("crosshair", on);
+    }
+
+    btnCoords.addEventListener("click", () => setCoordsMode(!coordsMode));
+
+    map.on("click", (e) => {
+      if (!coordsMode) return;
+      const yx = [round(e.latlng.lat), round(e.latlng.lng)]; // [y, x]
+      coordsText.textContent = JSON.stringify(yx);
+      console.log("Punto:", yx);
+    });
+
+    function round(n) {
+      return Math.round(n);
+    }
+
+    function clearRoute() {
+      // borra todas las carreras visibles
+      for (const raceId of Array.from(visibleRaceIds)) {
+        removeRaceFromMap(raceId);
+      }
+
+      // borra ruta creada (modo crear ruta)
+      createdPoints = [];
+      if (createdPolyline) { map.removeLayer(createdPolyline); createdPolyline = null; }
+      setCreateRouteMode(false);
+
+      // desactiva UI de ojos (los pone en gris)
+      document.querySelectorAll(".eye-btn").forEach(btn => {
+        btn.classList.remove("on");
+        btn.setAttribute("aria-pressed", "false");
+      });
+    }
+
+    function eyeSVG() {
+      // Icono ojo (SVG inline) para no depender de archivos externos
+      return `
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+    </svg>
+  `;
+    }
+
+    function updateEyeUI(raceId, isOn) {
+      const eye = document.querySelector(`.eye-btn[data-eye="${raceId}"]`);
+      if (!eye) return;
+
+      eye.classList.toggle("on", isOn);
+      eye.setAttribute("aria-pressed", String(isOn));
+    }
+
+    function buildUI() {
+      raceListEl.innerHTML = "";
+
+      for (const race of RACES) {
+        const item = document.createElement("div");
+        item.className = "race-item";
+        item.dataset.id = race.id;
+
+        // Parte izquierda: punto color + nombre
+        const left = document.createElement("div");
+        left.className = "race-left";
+        left.innerHTML = `
+      <span class="dot" style="background:${race.color}"></span>
+      <span class="race-name">${race.name}</span>
+    `;
+
+        // Acciones (ojo)
+        const actions = document.createElement("div");
+        actions.className = "race-actions";
+
+        const eyeBtn = document.createElement("button");
+        eyeBtn.type = "button";
+        eyeBtn.className = "eye-btn";             // por defecto gris
+        eyeBtn.dataset.eye = race.id;
+        eyeBtn.setAttribute("aria-pressed", "false");
+        eyeBtn.title = "Mostrar/ocultar";
+        eyeBtn.innerHTML = eyeSVG();
+
+        // Importante: que el click en el ojo no “seleccione” el item
+        eyeBtn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          toggleRaceVisibility(race.id);
         });
 
-        L.imageOverlay(IMAGE_URL, bounds).addTo(map);
-        const initialZoom = -1; // ajusta si quieres más cerca (-0.5) o más lejos (-1.5)
-        const initialCenter = [IMAGE_H / 2, IMAGE_W / 2];
-
-        map.setView(initialCenter, initialZoom);
 
 
-        // Limitar paneo fuera de la imagen
-        map.setMaxBounds(bounds);
-        map.on("drag", () => map.panInsideBounds(bounds, { animate: false }));
-
-        // Estado actual
-        let currentPolyline = null;
-        let currentStartMarker = null;
-        let currentRaceId = null;
-
-        // UI
-        const raceListEl = document.getElementById("raceList");
-        const btnClear = document.getElementById("btnClear");
-        const btnCoords = document.getElementById("btnCoords");
-        const coordsBox = document.getElementById("coordsBox");
-        const coordsText = document.getElementById("coordsText");
-        const floatingButtons = document.getElementById("floatingButtons");
-
-        // ====== CREAR RUTA (clic para añadir puntos + preview) ======
-        const btnCreateRoute = document.getElementById("btnCreateRoute");
-        const btnUndoPoint = document.getElementById("btnUndoPoint");
-        const btnPrintRoute = document.getElementById("btnPrintRoute");
-
-        let createRouteMode = false;
-        let createdPoints = [];
-        let createdPolyline = null;
-
-        function setCreateRouteMode(on) {
-            createRouteMode = on;
-            btnCreateRoute.setAttribute("aria-pressed", String(on));
-            btnCreateRoute.textContent = `Crear ruta: ${on ? "ON" : "OFF"}`;
-
-            // cursor tipo mira cuando está activo
-            map.getContainer().classList.toggle("crosshair", on);
-
-            // Si activas crear ruta, apaga coordsMode (si lo estás usando)
-            if (on && coordsMode) setCoordsMode(false);
-        }
-
-        btnCreateRoute.addEventListener("click", () => {
-            setCreateRouteMode(!createRouteMode);
-        });
-
-        btnUndoPoint.addEventListener("click", () => {
-            if (!createdPoints.length) return;
-            createdPoints.pop();
-            redrawCreatedRoute();
-        });
-
-        btnPrintRoute.addEventListener("click", async () => {
-            if (!createdPoints.length) return;
-
-            const pretty = `[${createdPoints.map(p => `[${p[0]}, ${p[1]}]`).join(", ")}]`;
-
-            try {
-                await navigator.clipboard.writeText(pretty);
-
-                // Feedback visual
-                const originalText = btnPrintRoute.textContent;
-                btnPrintRoute.textContent = "Copiado ✅";
-                setTimeout(() => {
-                    btnPrintRoute.textContent = originalText;
-                }, 900);
-
-            } catch (err) {
-                // Fallback por si el navegador bloquea clipboard
-                console.warn("No se pudo copiar automáticamente, copia manual:", pretty);
-                alert("No se pudo copiar automáticamente. Mira la consola.");
-            }
-        });
+        const infoBtn = document.createElement("div");
+        infoBtn.className = "info-wrap";
+        infoBtn.innerHTML = `
+  <button type="button" class="info-btn" aria-label="Información">
+    ${infoSVG()}
+  </button>
+  <div class="info-tooltip">
+    Vueltas: ${Number.isFinite(race.laps) ? race.laps : 1}
+  </div>
+`;
 
 
-        function redrawCreatedRoute() {
-            // borrar preview anterior
-            if (createdPolyline) {
-                map.removeLayer(createdPolyline);
-                createdPolyline = null;
-            }
-
-            // dibujar preview si hay >=2 puntos
-            if (createdPoints.length >= 2) {
-                createdPolyline = L.polyline(createdPoints, {
-                    weight: 3,
-                    opacity: 0.9,
-                    color: "#ff0000",
-                    lineJoin: "round",
-                    lineCap: "round",
-                }).addTo(map);
-            }
-        }
-
-        // Añadir puntos al clicar en el mapa SOLO si modo crear ruta está ON
-        map.on("click", (e) => {
-            if (!createRouteMode) return;
-
-            const point = [round(e.latlng.lat), round(e.latlng.lng)]; // [y, x]
-            createdPoints.push(point);
-            redrawCreatedRoute();
-        });
-
-        // Modo coordenadas (para sacar puntos clicando)
-        let coordsMode = false;
-
-        function setCoordsMode(on) {
-            coordsMode = on;
-            btnCoords.setAttribute("aria-pressed", String(on));
-            btnCoords.textContent = `Modo coordenadas: ${on ? "ON" : "OFF"}`;
-            coordsBox.classList.toggle("hidden", !on);
-            map.getContainer().classList.toggle("crosshair", on);
-        }
-
-        btnCoords.addEventListener("click", () => setCoordsMode(!coordsMode));
-
-        map.on("click", (e) => {
-            if (!coordsMode) return;
-            const yx = [round(e.latlng.lat), round(e.latlng.lng)]; // [y, x]
-            coordsText.textContent = JSON.stringify(yx);
-            console.log("Punto:", yx);
-        });
-
-        function round(n) {
-            return Math.round(n);
-        }
-
-        // Dibujar/actualizar ruta
-        function showRace(raceId) {
-            const race = RACES.find(r => r.id === raceId);
-            if (!race) return;
-
-            // ✅ borrar ruta anterior (línea)
-            if (currentPolyline) {
-                map.removeLayer(currentPolyline);
-                currentPolyline = null;
-            }
-
-            // ✅ borrar inicio anterior (círculo)
-            if (currentStartMarker) {
-                map.removeLayer(currentStartMarker);
-                currentStartMarker = null;
-            }
-
-            // ✅ si estabas creando ruta, límpialo y apágalo (opcional, pero recomendado)
-            createdPoints = [];
-            if (createdPolyline) {
-                map.removeLayer(createdPolyline);
-                createdPolyline = null;
-            }
-            setCreateRouteMode(false);
-
-            currentRaceId = raceId;
-
-            // ✅ dibujar ruta
-            currentPolyline = L.polyline(race.path, {
-                weight: 3,
-                opacity: 0.95,
-                color: race.color,
-                lineJoin: "round",
-                lineCap: "round",
-            }).addTo(map);
-
-            // ✅ inicio = primer punto del path
-            const startPoint = Array.isArray(race.path) && race.path.length ? race.path[0] : null;
-            if (startPoint) {
-                currentStartMarker = L.circleMarker(startPoint, {
-                    radius: 5,
-                    color: race.color,
-                    weight: 3,
-                    fillColor: race.color,
-                    fillOpacity: 1,
-                }).addTo(map);
-            }
-
-            // ✅ marcar activo en lista
-            document.querySelectorAll(".race-item").forEach(el => {
-                el.classList.toggle("active", el.dataset.id === raceId);
-            });
-
-            console.log(`Mostrando carrera: ${race.name} (${race.id})`);
-        }
+        actions.appendChild(eyeBtn);
+        actions.appendChild(infoBtn);
 
 
+        item.appendChild(left);
+        item.appendChild(actions);
 
-        function clearRoute() {
-            // borra carrera mostrada
-            if (currentPolyline) { map.removeLayer(currentPolyline); currentPolyline = null; }
-            if (currentStartMarker) { map.removeLayer(currentStartMarker); currentStartMarker = null; }
+        raceListEl.appendChild(item);
+      }
+    }
 
-            // borra ruta creada
-            createdPoints = [];
-            if (createdPolyline) { map.removeLayer(createdPolyline); createdPolyline = null; }
-            setCreateRouteMode(false);
+    buildUI();
 
-            currentRaceId = null;
-            document.querySelectorAll(".race-item").forEach(el => el.classList.remove("active"));
-        }
+    const btnToggleAllRaces = document.getElementById("btnToggleAllRaces");
 
+    function showAllRaces() {
+      for (const race of RACES) {
+        if (!visibleRaceIds.has(race.id)) addRaceToMap(race);
+        updateEyeUI(race.id, true);
+      }
+      btnToggleAllRaces.textContent = "Ocultar carreras";
+    }
 
+    function hideAllRaces() {
+      for (const raceId of Array.from(visibleRaceIds)) {
+        removeRaceFromMap(raceId);
+      }
+      // deja todos los ojos en OFF
+      for (const race of RACES) updateEyeUI(race.id, false);
 
-        btnClear.addEventListener("click", clearRoute);
+      btnToggleAllRaces.textContent = "Ver carreras";
+    }
 
-        // Crear lista lateral y botones flotantes
-        function buildUI() {
-            raceListEl.innerHTML = "";
-            floatingButtons.innerHTML = "";
+    function areAllVisible() {
+      // “todas visibles” = visibleRaceIds contiene todas las ids
+      return RACES.length > 0 && RACES.every(r => visibleRaceIds.has(r.id));
+    }
 
-            for (const race of RACES) {
-                // Item en panel lateral
-                const item = document.createElement("button");
-                item.type = "button";
-                item.className = "race-item";
-                item.dataset.id = race.id;
-                item.innerHTML = `
-          <span class="dot" style="background:${race.color}"></span>
-          <span class="race-name">${race.name}</span>
-        `;
-                item.addEventListener("click", () => showRace(race.id));
-                raceListEl.appendChild(item);
+    btnToggleAllRaces.addEventListener("click", () => {
+      if (areAllVisible()) hideAllRaces();
+      else showAllRaces();
+    });
 
+    function infoSVG() {
+      return `
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm0 15a1 1 0 0 1-1-1v-4a1 1 0 1 1 2 0v4a1 1 0 0 1-1 1Zm0-9a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 8Z"/>
+    </svg>
+  `;
+    }
 
-            }
-        }
-
-        buildUI();
-
-        // Mostrar una por defecto (opcional)
-        //showRace(RACES[0].id);
-    </script>
+  </script>
 </body>
 
 </html>
