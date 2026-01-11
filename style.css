@@ -205,11 +205,112 @@ body {
 }
 
 .logo {
-  width: 28px;
-  height: 28px;
-  margin-right: 10px;
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
 }
+
 .brand {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
+}
+
+/* Item de carrera con acciones a la derecha */
+.race-item {
+    justify-content: space-between;
+}
+
+.race-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.race-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Ojo: gris por defecto (oculto), blanco cuando está ON (visible) */
+.eye-btn {
+    border: 0;
+    background: transparent;
+    padding: 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    /* gris */
+}
+
+.eye-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.eye-btn.on {
+    color: #ffffff;
+    /* blanco */
+}
+
+.btn-block {
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Contenedor del icono info */
+.info-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Botón ℹ */
+.info-btn {
+    border: none;
+    background: transparent;
+    cursor: default;
+    padding: 6px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Tooltip */
+.info-tooltip {
+    position: absolute;
+    bottom: 125%;
+    right: 50%;
+    transform: translateX(50%);
+    background: rgba(20, 20, 20, 0.95);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+/* Flechita del tooltip */
+.info-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(20, 20, 20, 0.95) transparent transparent transparent;
+}
+
+/* Mostrar tooltip al hover */
+.info-wrap:hover .info-tooltip {
+    opacity: 1;
+    transform: translateX(50%) translateY(-4px);
 }
