@@ -314,3 +314,123 @@ body {
     opacity: 1;
     transform: translateX(50%) translateY(-4px);
 }
+
+/* =========================
+   DIALOG: Crear carrera
+   ========================= */
+
+/* Backdrop: que oscurezca suave sin “lavar” el mapa */
+#dlgRace::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+    /* quita blur si lo tenías, porque hace que parezca “gris feo” */
+    backdrop-filter: none;
+}
+
+/* Caja del dialog */
+#dlgRace {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    padding: 0;
+    /* el padding lo damos al form */
+    width: min(720px, 92vw);
+    /* más ancho */
+    max-width: 720px;
+    background: rgba(18, 22, 28, 0.92);
+    color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* El form dentro del dialog (así no dependes de clases) */
+#dlgRace form {
+    padding: 18px 18px 16px;
+}
+
+/* Título “Crear carrera” (si usas <h2> o <div class="dlg-title">) */
+#dlgRace h2,
+#dlgRace .dlg-title {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    /* letra más grande */
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+/* Labels */
+#dlgRace label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.9;
+    margin: 12px 0 6px;
+}
+
+/* Inputs y select */
+#dlgRace input[type="text"],
+#dlgRace input[type="number"],
+#dlgRace select {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(10, 12, 16, 0.55);
+    color: rgba(255, 255, 255, 0.92);
+    padding: 0 12px;
+    font-size: 15px;
+    outline: none;
+}
+
+#dlgRace input::placeholder {
+    color: rgba(255, 255, 255, 0.40);
+}
+
+/* Focus bonito */
+#dlgRace input:focus,
+#dlgRace select:focus {
+    border-color: rgba(120, 190, 255, 0.55);
+    box-shadow: 0 0 0 3px rgba(120, 190, 255, 0.18);
+}
+
+/* Disabled (cuando sprint pone laps=0) */
+#dlgRace input:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Zona de botones */
+#dlgRace .dlg-actions,
+#dlgRace menu {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Botones dentro del dialog */
+#dlgRace button {
+    height: 38px;
+    border-radius: 10px;
+    padding: 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#dlgRace button:hover {
+    background: rgba(255, 255, 255, 0.09);
+}
+
+#dlgRace button.primary,
+#dlgRace button[type="submit"] {
+    background: rgba(120, 190, 255, 0.18);
+    border-color: rgba(120, 190, 255, 0.30);
+}
+
+#dlgRace button.primary:hover,
+#dlgRace button[type="submit"]:hover {
+    background: rgba(120, 190, 255, 0.26);
+}
