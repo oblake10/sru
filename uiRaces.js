@@ -1,6 +1,10 @@
 // uiRaces.js
 (function () {
   const App = (window.App = window.App || {});
+  const RACE_COLORS = {
+  laps: "#1e90ff",    // azul
+  sprint: "#ff4d4d",  // rojo
+};
 const getRaces = () => window.RACES || [];
 
   // ====== DOM ======
@@ -70,7 +74,7 @@ const raceData = {
   name: App.draftRace.name,
   type: App.draftRace.type,
   laps: App.draftRace.laps,
-  color: "#1e90ff",
+  color: RACE_COLORS[App.draftRace.type] || "#ffffff",
   path,
   start: path[0],
   createdAt: Date.now(),
